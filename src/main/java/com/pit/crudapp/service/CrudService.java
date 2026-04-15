@@ -45,8 +45,18 @@ public class CrudService {
 
     }
 
-    public void deleteHospital(int id) {
-        crudRepository.deleteById(id);
+    public String deleteHospital(int id) {
+        try {
+            if(crudRepository.existsById(id)){
+                crudRepository.deleteById(id);
+                return "Deleted successfully";
+            }else{
+                return "Hospital not found";
+            }
+
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e);
+        }
 
 
 

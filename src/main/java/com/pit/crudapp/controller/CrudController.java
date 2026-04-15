@@ -31,7 +31,7 @@ public class CrudController {
 
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/byId/{id}")
     public ResponseEntity<String> getHospital(@PathVariable int id) {
         Optional<Hospital> hospital = crudService.getHospital(id);
         String json = objectMapper.writeValueAsString(hospital);
@@ -56,11 +56,11 @@ public class CrudController {
         return ResponseEntity.ok(json);
     }
 
-    @DeleteMapping("delete/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<ApiResponse> deleteHospital(@PathVariable int id) {
-        crudService.deleteHospital(id);
+        String deleteStatus =crudService.deleteHospital(id);
         return ResponseEntity.status(HttpStatus.OK)
-                .body(new ApiResponse(id, "Deleted successfully"));
+                .body(new ApiResponse(id, deleteStatus));
     }
 
 }
