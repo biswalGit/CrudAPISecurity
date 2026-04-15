@@ -1,5 +1,6 @@
 package com.pit.crudapp.security.config;
 
+import com.pit.crudapp.jwt.util.JwtAuthEntryPoint;
 import com.pit.crudapp.jwt.util.JwtFilter;
 import com.pit.crudapp.jwt.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,9 @@ public class CrudSecurityConfig {
     @Autowired
     JwtFilter jwtFilter;
 
+    @Autowired
+    JwtAuthEntryPoint authEntryPoint;
+
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -41,13 +45,15 @@ public class CrudSecurityConfig {
                         .disable()
 
                 )
+                .exceptionHandling(exception ->
+                        exception.authenticationEntryPoint(authEntryPoint))
                 .headers(headers -> headers
                         .frameOptions(HeadersConfigurer.FrameOptionsConfig::disable) // ✅ allow iframe
                 )
                 .authorizeHttpRequests(auth ->
-                        auth.requestMatchers("/getToken", "/h2-console/**","/user/add")
+                        auth.requestMatchers("/getToken", "/h2-console/**", "/user/add")
                                 .permitAll()
-                                .requestMatchers("/hospital/all", "/hospital/byId/**").hasAnyRole("user","admin")
+                                .requestMatchers("/hospital/all", "/hospital/byId/**").hasAnyRole("user", "admin")
                                 .requestMatchers("/hospital/add", "/hospital/update", "/hospital/delete/**").hasRole("admin")
                                 .anyRequest().authenticated()
                 )
